@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:cipher2/cipher2.dart';
 import 'package:flutter/material.dart';
@@ -285,12 +286,20 @@ class _MyAppState extends State<MyApp> {
   void testEncryptAesGcm128() async {
     String nonce = await Cipher2.generateNonce();
     GcmResult encryptionResult;
-    String plaintext = 'test rtest test test test test test';
+    String plaintext = Base64Encoder()
+        .convert(utf8.encode('test rtest test test test test test'));
     String key = "key1234567123456";
     String result = "";
+    String additionalData =
+        Base64Encoder().convert(utf8.encode('我是shyandsy，never give up man'));
 
     try {
-      encryptionResult = await Cipher2.encryptAesGcm128(plaintext, key, nonce);
+      encryptionResult = await Cipher2.encryptAesGcm128(
+        plainText: plaintext,
+        key: key,
+        nonce: nonce,
+        additionalData: additionalData,
+      );
       print(nonce);
       print(encryptionResult.result);
       print(encryptionResult.tag);
@@ -301,15 +310,19 @@ class _MyAppState extends State<MyApp> {
     }
 
     try {
-      result =
-          await Cipher2.decryptAesGcm128(encryptionResult.result, key, nonce);
+      result = await Cipher2.decryptAesGcm128(
+        encryptedText: encryptionResult.result,
+        key: key,
+        nonce: nonce,
+        additionalData: additionalData,
+      );
       print(result);
       print("testEncryptAesGcm128 case2: pass");
     } on PlatformException catch (e) {
       print("testEncryptAesGcm128 case2: failed, " + e.code);
     }
 
-    if (plaintext != result) {
+    if (utf8.decode(Base64Decoder().convert(plaintext)) != result) {
       print("testEncryptAesGcm128 case3: failed");
     } else {
       print("testEncryptAesGcm128 case3: pass");

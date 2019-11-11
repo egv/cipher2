@@ -43,7 +43,7 @@ class Cipher2Plugin: MethodCallHandler {
     val key = call.argument<String>("key")
     val iv = call.argument<String>("iv")
 
-    if(data == null || key == null || iv == null){
+    if (data == null || key == null || iv == null) {
       result.error(
               "ERROR_INVALID_PARAMETER_TYPE",
               "the parameters data, key and iv must be all strings",
@@ -56,7 +56,7 @@ class Cipher2Plugin: MethodCallHandler {
     val keyArray = key.toByteArray(CHARSET)
     val ivArray = iv.toByteArray(CHARSET)
 
-    if(keyArray.size != 16 || ivArray.size != 16){
+    if (keyArray.size != 16 || ivArray.size != 16) {
       result.error(
               "ERROR_INVALID_KEY_OR_IV_LENGTH",
               "the length of key and iv must be all 128 bits",
@@ -166,7 +166,19 @@ class Cipher2Plugin: MethodCallHandler {
       return
     }
 
-    val dataArray = data.toByteArray(CHARSET)
+    val dataArray:ByteArray
+    try {
+      dataArray = Base64.getDecoder().decode(data.toByteArray(CHARSET));
+    } catch (e: Exception) {
+      result.error(
+              "ERROR_INVALID_KEY_OR_IV_LENGTH",
+              "the nonce should be a valid base64 string",
+              null
+      )
+
+      return
+    }
+
     val keyArray = key.toByteArray(CHARSET)
 
     // decode nonce from base64 string 
@@ -193,18 +205,30 @@ class Cipher2Plugin: MethodCallHandler {
       return
     }
 
+    var additionalData:ByteArray? = null
+    try {
+      val ad = call.argument<String>("additional_data")
+      if (ad != null) {
+        additionalData = Base64.getDecoder().decode(ad?.toByteArray(CHARSET))
+      }
+    } catch (e: IllegalArgumentException) {
+      // this is on purpose
+    }
+
+
     val cipher = Cipher.getInstance("AES/GCM/NoPadding")
     val keySpec = SecretKeySpec(keyArray, "AES")
     val gcmSpec = GCMParameterSpec(128, nonceArray)
 
     cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmSpec)
+    if (additionalData != null) {
+      cipher.updateAAD(additionalData)
+    }
 
     val outputLength = cipher.getOutputSize(dataArray.size)
     val ciphertext = cipher.doFinal(dataArray)
 
     val outTag = ciphertext.copyOfRange(outputLength-16, outputLength)
-
-    val text = Base64.getEncoder().encodeToString(ciphertext)
 
     result.success(JSONObject(mapOf(
             "data" to Base64.getEncoder().encodeToString(ciphertext),
@@ -233,7 +257,7 @@ class Cipher2Plugin: MethodCallHandler {
     // key byte array
     keyArray = key.toByteArray(CHARSET)
 
-    // deocde the base64 string to get nonce byte array
+    // decode the base64 string to get nonce byte array
     try {
       nonceArray = Base64.getDecoder().decode(nonce.toByteArray(CHARSET))
     } catch (e: IllegalArgumentException) {
@@ -266,12 +290,24 @@ class Cipher2Plugin: MethodCallHandler {
       return
     }
 
+    var additionalData:ByteArray? = null
+    try {
+      val ad = call.argument<String>("additional_data")
+      if (ad != null) {
+        additionalData = Base64.getDecoder().decode(ad?.toByteArray(CHARSET))
+      }
+    } catch (e: IllegalArgumentException) {
+      // this is on purpose
+    }
+
     val cipher = Cipher.getInstance("AES/GCM/NoPadding")
     val keySpec = SecretKeySpec(keyArray, "AES")
     val gcmSpec = GCMParameterSpec(128, nonceArray)
 
     cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmSpec)
-
+    if (additionalData != null) {
+      cipher.updateAAD(additionalData)
+    }
     val plaintext = cipher.doFinal(dataArray)
 
     val text = plaintext.toString(CHARSET)

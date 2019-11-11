@@ -171,11 +171,18 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
             //let dataArray = Array(data.utf8)
             let keyArray = Array(key.utf8)
             let ivArray = Array(iv.utf8)
+            var additionalData: Array<UInt8>? = nil
+
+            if let additionalDataStr = args["additional_data"] {
+                if let additionalDataRaw = Data(base64Encoded: additionalDataStr) {
+                    additionalData = additionalDataRaw.bytes
+                }
+            }
 
             do {
-                let gcm = GCM(iv: ivArray, mode: .combined)
+                let gcm = GCM(iv: ivArray, additionalAuthenticatedData: additionalData, mode: .combined)
                 let aes = try AES(key: keyArray, blockMode: gcm, padding: .noPadding)
-                let encrypted = try aes.encrypt(Array(data.utf8))
+                let encrypted = try aes.encrypt(Data(base64Encoded: data)!.bytes)
                 let tag = gcm.authenticationTag
 
                 let encoder = JSONEncoder()
@@ -208,6 +215,14 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
 
             let encryptedData = NSData(base64Encoded: data, options:[]) ?? nil
 
+            var additionalData: Array<UInt8>? = nil
+
+            if let additionalDataStr = args["additional_data"] {
+                if let additionalDataRaw = Data(base64Encoded: additionalDataStr) {
+                    additionalData = additionalDataRaw.bytes
+                }
+            }
+
             if (encryptedData == nil) {
                 result(
                     FlutterError(
@@ -220,7 +235,7 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
             }
 
             do {
-                let gcm = GCM(iv: ivArray, mode: .combined)
+                let gcm = GCM(iv: ivArray, additionalAuthenticatedData: additionalData, mode: .combined)
                 let aes = try AES(key: keyArray, blockMode: gcm, padding: .noPadding)
                 let res = try (encryptedData! as Data).decrypt(cipher: aes)
 
