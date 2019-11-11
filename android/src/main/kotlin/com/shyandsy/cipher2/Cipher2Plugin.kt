@@ -27,26 +27,26 @@ class Cipher2Plugin: MethodCallHandler {
   override fun onMethodCall(call: MethodCall, result: Result) {
     when (call.method) {
       "getPlatformVersion" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")
-      "Encrypt_AesCbc128Padding7" -> Encrypt_AesCbc128Padding7(call, result)
-      "Decrypt_AesCbc128Padding7" -> Decrypt_AesCbc128Padding7(call, result)
-      "Encrypt_AesGcm128" -> Encrypt_AesGcm128(call, result)
-      "Decrypt_AesGcm128" -> Decrypt_AesGcm128(call, result)
-      "Generate_Nonce" -> Generate_Nonce(call, result)
+      "Encrypt_AesCbc128Padding7" -> encryptAesCbc128Padding7(call, result)
+      "Decrypt_AesCbc128Padding7" -> decryptAesCbc128Padding7(call, result)
+      "Encrypt_AesGcm128" -> encryptAesGcm128(call, result)
+      "Decrypt_AesGcm128" -> decryptAesGcm128(call, result)
+      "Generate_Nonce" -> generateNonce(call, result)
       else -> result.notImplemented()
     }
   }
 
   // AES 128 cbc padding 7
-  fun Encrypt_AesCbc128Padding7(call: MethodCall, result: Result){
+  private fun encryptAesCbc128Padding7(call: MethodCall, result: Result){
     val data = call.argument<String>("data")
     val key = call.argument<String>("key")
     val iv = call.argument<String>("iv")
 
     if(data == null || key == null || iv == null){
       result.error(
-        "ERROR_INVALID_PARAMETER_TYPE",
-        "the parameters data, key and iv must be all strings",
-        null
+              "ERROR_INVALID_PARAMETER_TYPE",
+              "the parameters data, key and iv must be all strings",
+              null
       )
       return
     }
@@ -57,9 +57,9 @@ class Cipher2Plugin: MethodCallHandler {
 
     if(keyArray.size != 16 || ivArray.size != 16){
       result.error(
-        "ERROR_INVALID_KEY_OR_IV_LENGTH",
-        "the length of key and iv must be all 128 bits",
-        null
+              "ERROR_INVALID_KEY_OR_IV_LENGTH",
+              "the length of key and iv must be all 128 bits",
+              null
       )
       return
     }
@@ -74,21 +74,21 @@ class Cipher2Plugin: MethodCallHandler {
 
     val text = Base64.getEncoder().encodeToString(ciphertext)
 
-    result.success(text) 
+    result.success(text)
 
     return
   }
 
-  fun Decrypt_AesCbc128Padding7(call: MethodCall, result: Result){
+  private fun decryptAesCbc128Padding7(call: MethodCall, result: Result){
     val data = call.argument<String>("data")
     val key = call.argument<String>("key")
     val iv = call.argument<String>("iv")
 
     if(data == null || key == null || iv == null){
       result.error(
-        "ERROR_INVALID_PARAMETER_TYPE",
-        "the parameters data, key and iv must be all strings",
-        null
+              "ERROR_INVALID_PARAMETER_TYPE",
+              "the parameters data, key and iv must be all strings",
+              null
       )
       return
     }
@@ -96,27 +96,27 @@ class Cipher2Plugin: MethodCallHandler {
     val keyArray = key.toByteArray(CHARSET)
     val ivArray = iv.toByteArray(CHARSET)
 
-    if(keyArray.size != 16 || ivArray.size != 16){
+    if (keyArray.size != 16 || ivArray.size != 16) {
       result.error(
-        "ERROR_INVALID_KEY_OR_IV_LENGTH",
-        "the length of key and iv must be all 128 bits",
-        null
+              "ERROR_INVALID_KEY_OR_IV_LENGTH",
+              "the length of key and iv must be all 128 bits",
+              null
       )
       return
     }
 
     var dataArray:ByteArray; // = ByteArray(0)
-  
+
     try{
-        dataArray = Base64.getDecoder().decode(data.toByteArray(CHARSET))
-        if(dataArray.size % 16 != 0){
-          throw IllegalArgumentException("")
-        }
+      dataArray = Base64.getDecoder().decode(data.toByteArray(CHARSET))
+      if (dataArray.size % 16 != 0) {
+        throw IllegalArgumentException("")
+      }
     }catch (e: IllegalArgumentException) {
       result.error(
-        "ERROR_INVALID_ENCRYPTED_DATA",
-        "the data should be a valid base64 string with length at multiple of 128 bits",
-        null
+              "ERROR_INVALID_ENCRYPTED_DATA",
+              "the data should be a valid base64 string with length at multiple of 128 bits",
+              null
       )
       return
     }
@@ -130,8 +130,8 @@ class Cipher2Plugin: MethodCallHandler {
     val ciphertext = cipher.doFinal(dataArray)
 
     val text = ciphertext.toString(CHARSET)
-    
-    result.success(text) 
+
+    result.success(text)
 
     return
   }
@@ -141,7 +141,7 @@ class Cipher2Plugin: MethodCallHandler {
 
   return a base64 encoded string of 12 bytes nonce  
   */
-  fun Generate_Nonce(call: MethodCall, result: Result) {
+  private fun generateNonce(call: MethodCall, result: Result) {
     val secureRandom = SecureRandom()
     val nance = ByteArray(NONCE_LENGTH_IN_BYTES)
     secureRandom.nextBytes(nance)
@@ -151,17 +151,16 @@ class Cipher2Plugin: MethodCallHandler {
     return
   }
 
-  fun Encrypt_AesGcm128(call: MethodCall, result: Result){
-
+  private fun encryptAesGcm128(call: MethodCall, result: Result) {
     val data = call.argument<String>("data")
     val key = call.argument<String>("key")
     val nonce = call.argument<String>("nonce")
 
-    if(data == null || key == null || nonce == null){
+    if (data == null || key == null || nonce == null) {
       result.error(
-        "ERROR_INVALID_PARAMETER_TYPE",
-        "the parameters data, key and nonce must be all strings",
-        null
+              "ERROR_INVALID_PARAMETER_TYPE",
+              "the parameters data, key and nonce must be all strings",
+              null
       )
       return
     }
@@ -170,24 +169,26 @@ class Cipher2Plugin: MethodCallHandler {
     val keyArray = key.toByteArray(CHARSET)
 
     // decode nonce from base64 string 
-    var nonceArray:ByteArray;
-    try{
+    val nonceArray:ByteArray
+    try {
       nonceArray = Base64.getDecoder().decode(nonce.toByteArray(CHARSET))
-    }catch (e: IllegalArgumentException) {
+    } catch (e: IllegalArgumentException) {
       result.error(
-        "ERROR_INVALID_KEY_OR_IV_LENGTH",
-        "the nonce should be a valid base64 string",
-        null
+              "ERROR_INVALID_KEY_OR_IV_LENGTH",
+              "the nonce should be a valid base64 string",
+              null
       )
+
       return
     }
 
-    if(keyArray.size != 16 || nonceArray.size != 12){
+    if (keyArray.size != 16 || nonceArray.size != 12) {
       result.error(
-        "ERROR_INVALID_KEY_OR_IV_LENGTH",
-        "the length of key and nonce should be 128 bits and 92 bits",
-        null
+              "ERROR_INVALID_KEY_OR_IV_LENGTH",
+              "the length of key and nonce should be 128 bits and 92 bits",
+              null
       )
+
       return
     }
 
@@ -201,12 +202,12 @@ class Cipher2Plugin: MethodCallHandler {
 
     val text = Base64.getEncoder().encodeToString(ciphertext)
 
-    result.success(text) 
+    result.success(mapOf("data" to text, "tag" to Base64.getEncoder().encodeToString(ciphertext)))
 
     return
   }
 
-  fun Decrypt_AesGcm128(call: MethodCall, result: Result) {
+  private fun decryptAesGcm128(call: MethodCall, result: Result) {
     val data = call.argument<String>("data")
     val key = call.argument<String>("key")
     val nonce = call.argument<String>("nonce")
@@ -214,11 +215,11 @@ class Cipher2Plugin: MethodCallHandler {
     var nonceArray:ByteArray;
     var dataArray:ByteArray;
 
-    if(data == null || key == null || nonce == null){
+    if (data == null || key == null || nonce == null) {
       result.error(
-        "ERROR_INVALID_PARAMETER_TYPE",
-        "the parameters data, key and nonce must be all strings",
-        null
+              "ERROR_INVALID_PARAMETER_TYPE",
+              "the parameters data, key and nonce must be all strings",
+              null
       )
       return
     }
@@ -227,34 +228,34 @@ class Cipher2Plugin: MethodCallHandler {
     keyArray = key.toByteArray(CHARSET)
 
     // deocde the base64 string to get nonce byte array
-    try{
+    try {
       nonceArray = Base64.getDecoder().decode(nonce.toByteArray(CHARSET))
-    }catch (e: IllegalArgumentException) {
+    } catch (e: IllegalArgumentException) {
       result.error(
-        "ERROR_INVALID_KEY_OR_IV_LENGTH",
-        "the nonce should be a valid base64 string",
-        null
+              "ERROR_INVALID_KEY_OR_IV_LENGTH",
+              "the nonce should be a valid base64 string",
+              null
       )
       return
     }
 
     // decode the base64 string to get the data byte array
-    try{
-        dataArray = Base64.getDecoder().decode(data.toByteArray(CHARSET))
-    }catch (e: IllegalArgumentException) {
+    try {
+      dataArray = Base64.getDecoder().decode(data.toByteArray(CHARSET))
+    } catch (e: IllegalArgumentException) {
       result.error(
-        "ERROR_INVALID_ENCRYPTED_DATA",
-        "the data should be a valid base64 string with length at multiple of 128 bits",
-        null
+              "ERROR_INVALID_ENCRYPTED_DATA",
+              "the data should be a valid base64 string with length at multiple of 128 bits",
+              null
       )
       return
     }
 
-    if(keyArray.size != 16 || nonceArray.size != 12){
+    if (keyArray.size != 16 || nonceArray.size != 12) {
       result.error(
-        "ERROR_INVALID_KEY_OR_IV_LENGTH",
-        "the length of key and nonce should be 128 bits and 92 bits",
-        null
+              "ERROR_INVALID_KEY_OR_IV_LENGTH",
+              "the length of key and nonce should be 128 bits and 92 bits",
+              null
       )
       return
     }
@@ -268,8 +269,8 @@ class Cipher2Plugin: MethodCallHandler {
     val plaintext = cipher.doFinal(dataArray)
 
     val text = plaintext.toString(CHARSET)
-    
-    result.success(text) 
+
+    result.success(text)
 
     return
   }
