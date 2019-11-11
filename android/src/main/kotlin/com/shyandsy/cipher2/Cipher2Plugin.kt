@@ -25,31 +25,14 @@ class Cipher2Plugin: MethodCallHandler {
   }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
-    if (call.method == "getPlatformVersion") {
-      result.success("Android ${android.os.Build.VERSION.RELEASE}")
-    } else if (call.method == "Encrypt_AesCbc128Padding7") {
-      
-      return Encrypt_AesCbc128Padding7(call, result)
-
-    } else if (call.method == "Decrypt_AesCbc128Padding7") {
-      
-      return Decrypt_AesCbc128Padding7(call, result)
-
-    } else if(call.method == "Generate_Nonce"){
-       
-      return Generate_Nonce(call, result)
-    
-    } else if(call.method == "Encrypt_AesGcm128"){
-      
-      return Encrypt_AesGcm128(call, result)
-
-    } else if(call.method == "Decrypt_AesGcm128"){
-      
-      return Decrypt_AesGcm128(call, result)
-
-    }else {
-      result.notImplemented()
-      return
+    when (call.method) {
+      "getPlatformVersion" -> result.success("Android ${android.os.Build.VERSION.RELEASE}")
+      "Encrypt_AesCbc128Padding7" -> Encrypt_AesCbc128Padding7(call, result)
+      "Decrypt_AesCbc128Padding7" -> Decrypt_AesCbc128Padding7(call, result)
+      "Encrypt_AesGcm128" -> Encrypt_AesGcm128(call, result)
+      "Decrypt_AesGcm128" -> Decrypt_AesGcm128(call, result)
+      "Generate_Nonce" -> Generate_Nonce(call, result)
+      else -> result.notImplemented()
     }
   }
 
