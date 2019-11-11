@@ -33,7 +33,7 @@ enum TestedParams {
             )
         }
 
-        if (args["data"] == nil || args["key"] == nil || args["iv"] == nil) {
+        if (args["data"] == nil || args["key"] == nil) {
             return .error(
                 FlutterError(
                     code: "ERROR_INVALID_PARAMETER_TYPE",
@@ -157,7 +157,8 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
     }
 
     private func encryptAesGcm128(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-        switch TestedParams.fromCall(call) {
+        let p = TestedParams.fromCall(call)
+        switch p {
         case .error(let error):
             result(error)
             return
@@ -165,20 +166,26 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
         case .params(let args):
             let data = args["data"]!
             let key = args["key"]!
-            let iv = args["iv"]!
+            let iv = args["nonce"]!
 
             //let dataArray = Array(data.utf8)
             let keyArray = Array(key.utf8)
             let ivArray = Array(iv.utf8)
 
             do {
-                let gcm = GCM(iv: ivArray, mode: .detached)
+                let gcm = GCM(iv: ivArray, mode: .combined)
                 let aes = try AES(key: keyArray, blockMode: gcm, padding: .noPadding)
                 let encrypted = try aes.encrypt(Array(data.utf8))
                 let tag = gcm.authenticationTag
 
-                result(["data": encrypted,
-                        "tag": tag])
+                let encoder = JSONEncoder()
+
+                let jsonData = try encoder.encode([
+                    "data": Data(bytes: encrypted).base64EncodedString(),
+                    "tag": Data(bytes: tag!).base64EncodedString()
+                ])
+
+                result(String(bytes: jsonData, encoding: .utf8))
             } catch {
                 result(FlutterError(code: "ERROR_INVALID_CRYPTO_OPERATION", message: "error", details: nil))
             }
@@ -194,19 +201,32 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
         case .params(let args):
             let data = args["data"]!
             let key = args["key"]!
-            let iv = args["iv"]!
+            let iv = args["nonce"]!
 
-            //let dataArray = Array(data.utf8)
             let keyArray = Array(key.utf8)
             let ivArray = Array(iv.utf8)
 
-            do {
-                let gcm = GCM(iv: ivArray, mode: .detached)
-                let aes = try AES(key: keyArray, blockMode: gcm, padding: .noPadding)
-                let res = try aes.decrypt(Array(data.utf8))
+            let encryptedData = NSData(base64Encoded: data, options:[]) ?? nil
 
-                result(res)
+            if (encryptedData == nil) {
+                result(
+                    FlutterError(
+                        code: "ERROR_INVALID_ENCRYPTED_DATA",
+                        message: "the data should be a valid base64 string with length at multiple of 128 bits",
+                        details: nil
+                    )
+                )
+                return
+            }
+
+            do {
+                let gcm = GCM(iv: ivArray, mode: .combined)
+                let aes = try AES(key: keyArray, blockMode: gcm, padding: .noPadding)
+                let res = try (encryptedData! as Data).decrypt(cipher: aes)
+
+                result(String(bytes: res, encoding: .utf8))
             } catch {
+                print(error);
                 result(FlutterError(code: "ERROR_INVALID_CRYPTO_OPERATION", message: "error", details: nil))
             }
         }
@@ -227,7 +247,7 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
         case "Encrypt_AesGcm128":
             encryptAesGcm128(call, result: result)
 
-        case "Dencrypt_AesGcm128":
+        case "Decrypt_AesGcm128":
             decryptAesGcm128(call, result: result)
 
         case "Generate_Nonce":

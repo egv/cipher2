@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
-import 'package:flutter/services.dart';
+
 import 'package:cipher2/cipher2.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 void main() => runApp(MyApp());
 
@@ -284,23 +285,25 @@ class _MyAppState extends State<MyApp> {
   void testEncryptAesGcm128() async {
     String nonce = await Cipher2.generateNonce();
     GcmResult encryptionResult;
-    String plaintext = "我是谁，来喝杯茶";
+    String plaintext = 'test rtest test test test test test';
     String key = "key1234567123456";
     String result = "";
 
     try {
       encryptionResult = await Cipher2.encryptAesGcm128(plaintext, key, nonce);
-      //print(nonce);
-      //print(encryptedString);
+      print(nonce);
+      print(encryptionResult.result);
+      print(encryptionResult.tag);
+
       print("testEncryptAesGcm128 case1: pass");
     } on PlatformException catch (e) {
-      print("testEncryptAesGcm128 case1: failed");
+      print("testEncryptAesGcm128 case1: failed, " + e.code);
     }
 
     try {
       result =
           await Cipher2.decryptAesGcm128(encryptionResult.result, key, nonce);
-      //print(result);
+      print(result);
       print("testEncryptAesGcm128 case2: pass");
     } on PlatformException catch (e) {
       print("testEncryptAesGcm128 case2: failed, " + e.code);

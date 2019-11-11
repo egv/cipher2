@@ -5,6 +5,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry.Registrar
+import org.json.JSONObject
 import javax.crypto.Cipher
 import javax.crypto.spec.GCMParameterSpec
 import javax.crypto.spec.IvParameterSpec
@@ -198,11 +199,16 @@ class Cipher2Plugin: MethodCallHandler {
 
     cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmSpec)
 
+    val outputLength = cipher.getOutputSize(dataArray.size)
     val ciphertext = cipher.doFinal(dataArray)
+
+    val outTag = ciphertext.copyOfRange(outputLength-16, outputLength)
 
     val text = Base64.getEncoder().encodeToString(ciphertext)
 
-    result.success(mapOf("data" to text, "tag" to Base64.getEncoder().encodeToString(ciphertext)))
+    result.success(JSONObject(mapOf(
+            "data" to Base64.getEncoder().encodeToString(ciphertext),
+            "tag" to Base64.getEncoder().encodeToString(outTag))).toString())
 
     return
   }
