@@ -1,22 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="b9093de8-5748-4b53-9730-318068734bc9" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/android/src/main/kotlin/com/shyandsy/cipher2/Cipher2Plugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/android/src/main/kotlin/com/shyandsy/cipher2/Cipher2Plugin.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cipher2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/cipher2.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/android/src/main/kotlin/com/shyandsy/cipher2/Cipher2Plugin.kt" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/android/src/main/kotlin/com/shyandsy/cipher2/Cipher2Plugin.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/cipher2.iml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/cipher2.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/ios/Classes/SwiftCipher2Plugin.swift" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/ios/Classes/SwiftCipher2Plugin.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/lib/cipher2.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/lib/cipher2.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/example/ios/.symlinks/plugins/cipher2/pubspec.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/example/lib/main.dart" beforeDir="false" afterPath="$PROJECT_DIR$/example/lib/main.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ios/Classes/SwiftCipher2Plugin.swift" beforeDir="false" afterPath="$PROJECT_DIR$/ios/Classes/SwiftCipher2Plugin.swift" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/lib/cipher2.dart" beforeDir="false" afterPath="$PROJECT_DIR$/lib/cipher2.dart" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pubspec.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/pubspec.yaml" afterDir="false" />
-    </list>
+    <list default="true" id="b9093de8-5748-4b53-9730-318068734bc9" name="Default Changelist" comment="" />
     <ignored path="$PROJECT_DIR$/.dart_tool/" />
     <ignored path="$PROJECT_DIR$/.idea/" />
     <ignored path="$PROJECT_DIR$/.pub/" />
@@ -35,8 +20,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/android/src/main/kotlin/com/shyandsy/cipher2/Cipher2Plugin.kt">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="517">
-              <caret line="226" selection-start-line="226" selection-end-line="226" />
+            <state relative-caret-position="337">
+              <caret line="216" selection-start-line="216" selection-end-line="216" />
             </state>
           </provider>
         </entry>
@@ -95,7 +80,7 @@
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="286" />
     <option name="y" value="66" />
     <option name="width" value="2070" />
@@ -185,10 +170,10 @@
     <option name="totallyTimeSpent" value="253000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="286" y="66" width="2070" height="1257" extended-state="0" />
+    <frame x="0" y="23" width="1920" height="1177" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25887573" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.27955273" />
       <window_info id="Designer" order="1" />
       <window_info id="Build Variants" order="2" side_tool="true" />
       <window_info id="Image Layers" order="3" />
@@ -199,7 +184,7 @@
       <window_info id="Structure" order="8" side_tool="true" />
       <window_info id="Resources Explorer" order="9" />
       <window_info anchor="bottom" id="Dart Analysis" order="0" weight="0.3298791" />
-      <window_info anchor="bottom" id="Run" order="1" weight="0.4025751" />
+      <window_info anchor="bottom" id="Run" order="1" weight="0.43225807" />
       <window_info anchor="bottom" id="Android Profiler" order="2" show_stripe_button="false" />
       <window_info anchor="bottom" id="Event Log" order="3" side_tool="true" />
       <window_info anchor="bottom" id="Logcat" order="4" />
@@ -240,8 +225,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/android/src/main/kotlin/com/shyandsy/cipher2/Cipher2Plugin.kt">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="517">
-          <caret line="226" selection-start-line="226" selection-end-line="226" />
+        <state relative-caret-position="337">
+          <caret line="216" selection-start-line="216" selection-end-line="216" />
         </state>
       </provider>
     </entry>

@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:crypto/crypto.dart';
 import 'package:cipher2/cipher2.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -284,14 +285,21 @@ class _MyAppState extends State<MyApp> {
   }
 
   void testEncryptAesGcm128() async {
-    String nonce = await Cipher2.generateNonce();
+    String nonce = "VXZ0U3VwcVVwN1E0";
     GcmResult encryptionResult;
-    String plaintext = Base64Encoder()
-        .convert(utf8.encode('test rtest test test test test test'));
-    String key = "key1234567123456";
+    String plaintext = "7dFO+fEizmFMTiL+UJAadDCgovGQyLBiGMVViT4MVs4=";
+    String key = Base64Encoder().convert(sha256
+        .convert(utf8.encode(
+            "Vu8gU4Z898vm2WEoGCGzCJ@J6gConDJM9ca583658bce4c00b19b3bb4a121d564"))
+        .bytes);
     String result = "";
-    String additionalData =
-        Base64Encoder().convert(utf8.encode('我是shyandsy，never give up man'));
+    String additionalData = "VXZ0U3VwcVVwN1E0ZBayvQ==";
+/*
+key "Vu8gU4Z898vm2WEoGCGzCJ@J6gConDJM9ca583658bce4c00b19b3bb4a121d564"
+priv "7dFO+fEizmFMTiL+UJAadDCgovGQyLBiGMVViT4MVs4="
+pub "VXZ0U3VwcVVwN1E0ZBayvQ=="
+nonce "VXZ0U3VwcVVwN1E0"
+*/
 
     try {
       encryptionResult = await Cipher2.encryptAesGcm128(

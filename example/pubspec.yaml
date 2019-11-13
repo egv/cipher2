@@ -1,11 +1,12 @@
 name: cipher2_example
 description: Demonstrates how to use the cipher2 plugin.
-publish_to: 'none'
+publish_to: "none"
 
 environment:
-  sdk: '>=2.2.0 <3.0.0'
+  sdk: ">=2.2.0 <3.0.0"
 
 dependencies:
+  crypto: any
   flutter:
     sdk: flutter
 

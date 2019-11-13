@@ -169,7 +169,7 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
             let iv = args["nonce"]!
 
             //let dataArray = Array(data.utf8)
-            let keyArray = Array(key.utf8)
+            // let keyArray = Array(key.utf8)
             let ivArray = Array(iv.utf8)
             var additionalData: Array<UInt8>? = nil
 
@@ -181,7 +181,7 @@ public class SwiftCipher2Plugin: NSObject, FlutterPlugin {
 
             do {
                 let gcm = GCM(iv: ivArray, additionalAuthenticatedData: additionalData, mode: .combined)
-                let aes = try AES(key: keyArray, blockMode: gcm, padding: .noPadding)
+                let aes = try AES(key: Data(base64Encoded: key)!.bytes, blockMode: gcm, padding: .noPadding)
                 let encrypted = try aes.encrypt(Data(base64Encoded: data)!.bytes)
                 let tag = gcm.authenticationTag
 
